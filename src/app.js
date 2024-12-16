@@ -1,18 +1,22 @@
 const express = require("express");
-const { adminAuth, userAuth } = require("./utils/authMiddleware.js");
 
 const app = express();
 
-app.use("/admin", adminAuth);
-app.get("/user", userAuth, (req, res) => {
-  res.send("UserData send");
+app.get("/getUserData", (req, res) => {
+  try {
+    // logic of db data and get user data
+    throw new Error("a;SLKDJFVCMSLADN");
+  } catch (error) {
+    res.status(500).send("some erorr contact support team...");
+  }
 });
-//Get/users =>middlewares chain => request handlers
-app.get("/admin/getAllData", (req, res) => {
-  res.send("get all the data");
-});
-app.delete("/admin/deleteData", (req, res) => {
-  res.send("Delete the data");
+
+// below error should be the 1st parameter
+app.use("/", (err, req, res, next) => {
+  if (err) {
+    //log your error
+    res.status(500).send("something went wrong");
+  }
 });
 
 app.listen(8080, () => {
