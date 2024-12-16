@@ -1,24 +1,14 @@
 const express = require("express");
+const connectDb = require("./config/db.js");
 
 const app = express();
-
-app.get("/getUserData", (req, res) => {
-  try {
-    // logic of db data and get user data
-    throw new Error("a;SLKDJFVCMSLADN");
-  } catch (error) {
-    res.status(500).send("some erorr contact support team...");
-  }
-});
-
-// below error should be the 1st parameter
-app.use("/", (err, req, res, next) => {
-  if (err) {
-    //log your error
-    res.status(500).send("something went wrong");
-  }
-});
-//you should always wrtie it towards the end
-app.listen(8080, () => {
-  console.log("server is successfully listening on the port 8080!!!");
-});
+connectDb()
+  .then(() => {
+    console.log("Database connection established......");
+    app.listen(8080, () => {
+      console.log("server is successfully listening on the port 8080!!!");
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
