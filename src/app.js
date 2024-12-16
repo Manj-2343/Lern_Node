@@ -13,8 +13,12 @@ app.post("/signup", async (req, res) => {
   };
   // creating the new instance of teh userModel
   const user = new User(userObj);
-  await user.save();
-  res.send("User added successfully");
+  try {
+    await user.save();
+    res.send("User added successfully");
+  } catch (error) {
+    res.status(400).send("error saving the user");
+  }
 });
 // __v:0 this is  the version of you document
 
