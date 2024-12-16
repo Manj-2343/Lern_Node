@@ -5,6 +5,7 @@ const User = require("./models/user.js");
 const app = express();
 
 app.use(express.json());
+// add the data
 app.post("/signup", async (req, res) => {
   // creating the new instance of teh userModel
   const user = new User(req.body);
@@ -15,7 +16,37 @@ app.post("/signup", async (req, res) => {
     res.status(400).send("error saving the user");
   }
 });
-// __v:0 this is  the version of you document
+//get single data  on the basic the email
+app.get("/user", async (req, res) => {
+  const userEmail = req.body.emailId;
+  try {
+    //if you want to find the single user with same mailid
+    /** 
+    const user = await User.findOne({ emailId: userEmail });
+    res.send(user);
+*/
+    const users = await User.find({ emailId: userEmail });
+    if (users.length === 0) {
+      res.status(404).send("user not found");
+    } else {
+      res.send(users);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("something went wrong");
+  }
+});
+//get all the user userData
+//model=find
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("something went wrong");
+  }
+});
 
 connectDb()
   .then(() => {
