@@ -1,19 +1,20 @@
 const express = require("express");
 
-const app = express(); //this indicate the express js application
+const app = express();
 
-//syntax:app.use("/route",[rh1,rh2,rh3]) or app.use("/route",[rh1,rh2],rh3) or app.use("/route",rh1,rh2)
-app.use("/user", [
-  (req, res, next) => {
-    console.log("this is 1st response");
-    next(); //to handle the multiple  route handler
-  },
-  (req, res) => {
-    console.log("this is second response");
-    res.send("route handler two ");
-  },
-]); //the call back function is known as the route handler
-
+//another way to handle route handler
+app.use("/user", (req, res, next) => {
+  console.log("this is 1st response");
+  next();
+});
+app.use("/user", (req, res, next) => {
+  console.log("this is 1st response");
+  res.send("this is from second");
+  // next();
+});
+//note if you have double next after that you do not have any route handler then it under  goes error but if you have not the
+// the res.send in the  last route handler it give  the infinite request.
+//this next function is called the middleware.
 app.listen(8080, () => {
   console.log("server is successfully listening on the port 8080!!!");
 });
