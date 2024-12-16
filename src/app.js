@@ -18,7 +18,7 @@ app.use("/", (err, req, res, next) => {
     res.status(500).send("something went wrong");
   }
 });
-
+//you should always wrtie it towards the end
 app.listen(8080, () => {
   console.log("server is successfully listening on the port 8080!!!");
 });
