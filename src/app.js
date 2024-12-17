@@ -5,11 +5,12 @@ const {
   validateSignUpData,
   validateLoginData,
 } = require("./helpers/validation.js");
+
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
-
 const app = express();
+const { userAuth } = require("./utils/authMiddleware.js");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -64,20 +65,9 @@ app.post("/login", async (req, res) => {
 });
 
 //get teh profile
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const cookie = req.cookies;
-    const { token } = cookie;
-    if (!token) {
-      throw new Error("Invalid Token");
-    }
-    //valid the token
-    const decodedMessage = await jwt.verify(token, "DEV@TINDER123");
-    const { _id } = decodedMessage;
-    const user = await User.findById(_id);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    const user = await req.user;
     res.send(user);
   } catch (error) {
     console.log(error.message);
