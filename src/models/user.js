@@ -52,3 +52,5 @@ const userSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("User", userSchema);
+
+//you want  to sanitize tha data before send the data base

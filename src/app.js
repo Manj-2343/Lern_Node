@@ -66,10 +66,21 @@ app.delete("/user", async (req, res) => {
 //findByIdAndUpdate
 //Note:behind the seen findOneAndUpdate and findByIdAndUpdate is same .
 //any other data except from teh schema will not be updated
-app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params?.userId;
   const data = req.body;
+
   try {
+    const ALLOWED_UPDATE = ["photoUrl", "about", "gender", "age"];
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATE.includes(k)
+    );
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+    }
+    if (data?.skills.length > 10) {
+      throw new Error("skills cannot be more than 10");
+    }
     // if you get teh older data you can use {returnDocument: "before"},if you want new data you can used  {returnDocument: "after"}
     const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "before",
@@ -78,6 +89,7 @@ app.patch("/user", async (req, res) => {
     console.log(user);
     res.send("User Undated successfully");
   } catch (error) {
+    console.log(error);
     res.status(400).send("update failed");
   }
 });
