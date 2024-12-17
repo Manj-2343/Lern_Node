@@ -17,6 +17,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 //get single data  on the basic the email
+// model=find({emailId: userEmail })
 app.get("/user", async (req, res) => {
   const userEmail = req.body.emailId;
   try {
@@ -37,11 +38,43 @@ app.get("/user", async (req, res) => {
   }
 });
 //get all the user userData
-//model=find
+//model=find({})
 app.get("/feed", async (req, res) => {
   try {
     const users = await User.find({});
     res.send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("something went wrong");
+  }
+});
+// delete the document
+// findByIdAndDelete
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    const user = await User.findByIdAndDelete({ _id: userId });
+    res.send("User deleted successfully");
+    // const user = await User.findByIdAndDelete(userId);
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("something went wrong");
+  }
+});
+//update the method
+//findByIdAndUpdate
+//Note:behind the seen findOneAndUpdate and findByIdAndUpdate is same .
+//any other data except from teh schema will not be updated
+app.patch("/user", async (req, res) => {
+  const userId = req.body.userId;
+  const data = req.body;
+  try {
+    // if you get teh older data you can use {returnDocument: "before"},if you want new data you can used  {returnDocument: "after"}
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "before",
+    });
+    console.log(user);
+    res.send("User Undated successfully");
   } catch (error) {
     console.log(error);
     res.status(400).send("something went wrong");
