@@ -6,10 +6,13 @@ const {
   validateLoginData,
 } = require("./helpers/validation.js");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 // add the data
 app.post("/signup", async (req, res) => {
   try {
@@ -44,6 +47,12 @@ app.post("/login", async (req, res) => {
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
+      //create the token
+      const token = await jwt.sign({ _id: user._id }, "DEV@TINDER123");
+      console.log(token);
+
+      //add teh token to cookie and send the response back to the user.
+      res.cookie("token", token);
       res.send("Login successful");
     } else {
       throw new Error("Password is not correct");
@@ -51,6 +60,27 @@ app.post("/login", async (req, res) => {
   } catch (error) {
     console.error(error.message);
     res.status(400).send("Invalid credentials");
+  }
+});
+
+//get teh profile
+app.get("/profile", async (req, res) => {
+  try {
+    const cookie = req.cookies;
+    const { token } = cookie;
+    if (!token) {
+      throw new Error("Invalid Token");
+    }
+    //valid the token
+    const decodedMessage = await jwt.verify(token, "DEV@TINDER123");
+    const { _id } = decodedMessage;
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    res.send(user);
+  } catch (error) {
+    console.log(error.message);
   }
 });
 
