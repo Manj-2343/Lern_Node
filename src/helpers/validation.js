@@ -13,7 +13,22 @@ const validateSignUpData = (req) => {
     throw new Error("Please enter a strong  password");
   }
 };
+// New validation function for login
+const validateLoginData = (req) => {
+  const { emailId, password } = req.body;
+
+  if (!emailId || !password) {
+    throw new Error("Email and password are required");
+  }
+  if (!validator.isEmail(emailId)) {
+    throw new Error("Please enter a valid email address");
+  }
+  if (!validator.isStrongPassword(password)) {
+    throw new Error("Invalid password format");
+  }
+};
 
 module.exports = {
   validateSignUpData,
+  validateLoginData,
 };

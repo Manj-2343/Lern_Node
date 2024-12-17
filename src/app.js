@@ -1,7 +1,10 @@
 const express = require("express");
 const connectDb = require("./config/db.js");
 const User = require("./models/user.js");
-const { validateSignUpData } = require("./helpers/validation.js");
+const {
+  validateSignUpData,
+  validateLoginData,
+} = require("./helpers/validation.js");
 const bcrypt = require("bcrypt");
 
 const app = express();
@@ -29,6 +32,28 @@ app.post("/signup", async (req, res) => {
     res.status(400).send("error saving the user");
   }
 });
+
+app.post("/login", async (req, res) => {
+  try {
+    // Validate the request data
+    validateLoginData(req);
+    const { emailId, password } = req.body;
+    const user = await User.findOne({ emailId: emailId });
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (isPasswordValid) {
+      res.send("Login successful");
+    } else {
+      throw new Error("Password is not correct");
+    }
+  } catch (error) {
+    console.error(error.message);
+    res.status(400).send("Invalid credentials");
+  }
+});
+
 //get single data  on the basic the email
 // model=find({emailId: userEmail })
 app.get("/user", async (req, res) => {
