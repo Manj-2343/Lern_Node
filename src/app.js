@@ -1,19 +1,31 @@
 const express = require("express");
 const connectDb = require("./config/db.js");
 const User = require("./models/user.js");
+const { validateSignUpData } = require("./helpers/validation.js");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
 app.use(express.json());
 // add the data
 app.post("/signup", async (req, res) => {
-  // creating the new instance of teh userModel
-  const user = new User(req.body);
   try {
+    //validation to the data
+    validateSignUpData(req);
+    //encrypt you password
+    const { firstName, lastName, emailId, password } = req.body;
+    const passwordHash = await bcrypt.hash(password, 10);
+    //save the user
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
+    });
     await user.save();
     res.send("User added successfully");
   } catch (error) {
-    console.error(error);
+    console.error(error.message);
     res.status(400).send("error saving the user");
   }
 });
@@ -34,7 +46,7 @@ app.get("/user", async (req, res) => {
       res.send(users);
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.status(400).send("something went wrong");
   }
 });
@@ -45,7 +57,7 @@ app.get("/feed", async (req, res) => {
     const users = await User.find({});
     res.send(users);
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.status(400).send("something went wrong");
   }
 });
@@ -58,7 +70,7 @@ app.delete("/user", async (req, res) => {
     res.send("User deleted successfully");
     // const user = await User.findByIdAndDelete(userId);
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.status(400).send("something went wrong");
   }
 });
@@ -88,7 +100,7 @@ app.patch("/user/:userId", async (req, res) => {
     });
     res.send("User Undated successfully");
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.status(400).send("update failed");
   }
 });
@@ -103,3 +115,5 @@ connectDb()
   .catch((err) => {
     console.log(err);
   });
+
+//https://www.npmjs.com/package/bcrypt
