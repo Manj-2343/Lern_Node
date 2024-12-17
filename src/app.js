@@ -13,6 +13,7 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("User added successfully");
   } catch (error) {
+    console.error(error);
     res.status(400).send("error saving the user");
   }
 });
@@ -72,12 +73,12 @@ app.patch("/user", async (req, res) => {
     // if you get teh older data you can use {returnDocument: "before"},if you want new data you can used  {returnDocument: "after"}
     const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "before",
+      runValidators: true,
     });
     console.log(user);
     res.send("User Undated successfully");
   } catch (error) {
-    console.log(error);
-    res.status(400).send("something went wrong");
+    res.status(400).send("update failed");
   }
 });
 
