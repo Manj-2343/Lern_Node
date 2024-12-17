@@ -71,7 +71,7 @@ app.patch("/user/:userId", async (req, res) => {
   const data = req.body;
 
   try {
-    const ALLOWED_UPDATE = ["photoUrl", "about", "gender", "age"];
+    const ALLOWED_UPDATE = ["photoUrl", "about", "gender", "age", "skills"];
     const isUpdateAllowed = Object.keys(data).every((k) =>
       ALLOWED_UPDATE.includes(k)
     );
@@ -86,7 +86,6 @@ app.patch("/user/:userId", async (req, res) => {
       returnDocument: "before",
       runValidators: true,
     });
-    console.log(user);
     res.send("User Undated successfully");
   } catch (error) {
     console.log(error);
