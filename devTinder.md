@@ -20,3 +20,14 @@
 -GET /user/feed ->gets you the profiles of others
 
 status"ignore,interested,accepted,rejected"
+
+angellist.com
+apna
+hirect
+monster
+unstop
+wllfound
+inded
+naukri
+foundit
+aicte
