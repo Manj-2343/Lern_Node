@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema(
     firstName: {
       type: String,
       required: true,
-      index: true,
       minLength: 4,
       maxLength: 50,
     },
@@ -69,6 +68,10 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+//add compound index to find the istName and Last name (it optimize the query)
+// user.find({firstName:"Manoj",lastName:"Biswal"})
+// userSchema.index({ firstName: 1, lastName: 1 });
+
 //arrow function is not applicable
 userSchema.methods.getJWT = async function () {
   const user = this;
