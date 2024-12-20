@@ -19,7 +19,6 @@ requestRouter.post(
           .status(400)
           .json({ message: "Invalid status type  " + status });
       }
-
       // check the userId
       const toUser = await User.findById(toUserId);
       if (!toUser) {
